@@ -1,42 +1,53 @@
 import torch
-from imagen_pytorch import Unet, Imagen, ImagenTrainer
-from imagen_pytorch.data import Dataset
-import random
-import numpy as np
+from imagen_pytorch import Unet, Imagen
 
-np.random.seed(0)
-random.seed(0)
-torch.manual_seed(0)
+# unet for imagen
 
-unet = Unet(
-    dim = 128, # the "Z" layer dimension, i.e. the number of filters the outputs to the first layer
-    cond_dim = 256,
-    dim_mults = (1, 2, 4), # the channel dimensions inside the model (multiplied by dim)
+unet1 = Unet(
+    dim = 32,
+    cond_dim = 512,
+    dim_mults = (1, 2, 4, 8),
     num_resnet_blocks = 3,
-    layer_attns = (False, True, True),
-    layer_cross_attns = (False, True, True)
+    layer_attns = (False, True, True, True),
+    layer_cross_attns = (False, True, True, True)
 )
 
-# imagen = Imagen(
-#     unets = unet,
-#     image_sizes = 32,
-#     timesteps = 1000,
-#     cond_drop_prob = 0.1
-# ).cuda()
+unet2 = Unet(
+    dim = 32,
+    cond_dim = 512,
+    dim_mults = (1, 2, 4, 8),
+    num_resnet_blocks = (2, 4, 8, 8),
+    layer_attns = (False, False, False, True),
+    layer_cross_attns = (False, False, False, True)
+)
 
-# # mock images (get a lot of this) and text encodings from large T5
+# imagen, which contains the unets above (base unet and super resoluting ones)
 
-# # text_embeds = torch.randn(4, 32, 768).cuda()
-# # images = torch.randn(4, 3, 32, 32).cuda()
+imagen = Imagen(
+    unets = (unet1, unet2),
+    image_sizes = (64, 256),
+    timesteps = 1000,
+    cond_drop_prob = 0.1
+).cuda()
 
+# mock images (get a lot of this) and text encodings from large T5
 
-# images = imagen.sample(texts = [
-#     'a whale breaching from afar',
-#     # 'young girl blowing out candles on her birthday cake',
-#     # 'fireworks with blue and green sparkles'
-# ], cond_scale = 3)
+text_embeds = torch.randn(4, 256, 768).cuda()
+images = torch.randn(4, 3, 256, 256).cuda()
 
-# images[0].save("lol.png")
+# feed images into imagen, training each unet in the cascade
 
+for i in (1, 2):
+    loss = imagen(images, text_embeds = text_embeds, unet_number = i)
+    loss.backward()
 
-torch.onnx.export(unet, [(1, 3, 32, 32), (0.5,)], "unet.onnx", input_names=['image'], output_names=['prediction'])
+# do the above for many many many many steps
+# now you can sample an image based on the text embeddings from the cascading ddpm
+
+images = imagen.sample(texts = [
+    'a whale breaching from afar',
+    'young girl blowing out candles on her birthday cake',
+    'fireworks with blue and green sparkles'
+], cond_scale = 3.)
+
+images.shape # (3, 3, 256, 256)

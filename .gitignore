@@ -4,3 +4,5 @@ cruft
 wandb
 node_modules
 *.onnx
+*.png
+*.ckpt

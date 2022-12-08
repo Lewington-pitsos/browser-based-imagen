@@ -1,43 +1,5 @@
 'use strict';
 
-import * as ort from 'onnxruntime-web';
-import { Tokenizer } from './tokenizers.js';
-
-// With background scripts you can communicate with popup
-// and contentScript files.
-// For more information on background script,
-// See https://developer.chrome.com/extensions/background_pages
-
-
-
-async function collectData() {
-  console.log(chrome.runtime.getURL('tokenizer.json'))
-  const data = await (await fetch(chrome.runtime.getURL('tokenizer.json'))).json()
-  console.log(data);
-
-  const modelBuffer = await (await fetch(chrome.runtime.getURL('t5-model.onnx'))).arrayBuffer()
-  const sessionPromise = await ort.InferenceSession.create(modelBuffer, { executionProviders: ["wasm"] });
-  transformerSession = await sessionPromise;
-
-  console.log(transformerSession);
-
-  // let inputIds = tokenizer.encode("In the year 2525 if man is still alive, if woman can survive they will find");
-
-  // if (inputIds.length > TOKEN_LENGTH) {
-  //     throw new Error(`expected input to be less than 256 tokens long, got ${inputIds}`);
-  // }
-
-  // inputIdsTensor, encoderAttentionMaskTensor = getEncoderInput(inputIds);
-
-  // const encoderFeeds = {
-  //     "tokens": inputIdsTensor,
-  //     "attention_mask": encoderAttentionMaskTensor,
-  // }
-  // const encoderResults = await transformer.run(encoderFeeds);
-  // console.log("encoding:", encoderResults.data);
-
-}
-
 function loadModel() {
   console.log("content script in da house");
 }
