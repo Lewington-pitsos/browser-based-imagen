@@ -11,15 +11,21 @@ async function collectData() {
     const data = await (await fetch('tokenizer.json')).json()
     tokenizer = Tokenizer.fromConfig(data);
     console.log(data);
+    console.log('tokenizer', tokenizer)
   
-    const modelBuffer = await (await fetch('t5-model.onnx')).arrayBuffer()
-    const sessionPromise = await ort.InferenceSession.create(modelBuffer, { executionProviders: ["wasm"] });
-    transformerSession = await sessionPromise;
+    const tfmBuffer = await (await fetch('t5-model.onnx')).arrayBuffer()
+    const tfmSessionPromise = await ort.InferenceSession.create(tfmBuffer, { executionProviders: ["wasm"] });
   
-    console.log(transformerSession);
+    const unetBuffer = await (await fetch('unet.onnx')).arrayBuffer()
+    const unetSessionPromise = await ort.InferenceSession.create(unetBuffer, { executionProviders: ["wasm"] });
+    
+    const transformer = await tfmSessionPromise;
+    console.log('transformer session', transformer);
+    
+    unet = await unetSessionPromise;
+    console.log('unet session', unet);
   
-  
-    let inputIds = tokenizer.encode("In the year 2525 if man is still alive, if woman can survive they will find");
+    let inputIds = tokenizer.encode("a photo of a truck");
 
     if (inputIds.length > TOKEN_LENGTH) {
         throw new Error(`expected input to be less than 256 tokens long, got ${inputIds}`);
@@ -31,8 +37,11 @@ async function collectData() {
         "tokens": inputIdsTensor,
         "attention_mask": encoderAttentionMaskTensor,
     }
-    const encoderResults = await transformerSession.run(encoderFeeds);
-    console.log("encoding:", encoderResults);  
+    const encoderResults = await transformer.run(encoderFeeds);
+    console.log("encoding:", encoderResults);
+
+
+
 }
 
 console.log("about to collect data")
