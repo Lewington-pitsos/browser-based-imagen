@@ -1,29 +1,32 @@
+import transformers
+import transformers.convert_graph_to_onnx as onnx_convert
 import torch
-from imagen_pytorch import Unet, Imagen
-from torchviz import make_dot
+from typing import List
+from transformers import T5Tokenizer, T5EncoderModel, T5Config
+from pathlib import Path
 from torchsummary import summary
 
-# unet for imagen
+
+DEFAULT_T5_NAME = 'google/t5-v1_1-base'
+
+model = T5EncoderModel.from_pretrained(DEFAULT_T5_NAME)
+tokenizer = T5Tokenizer.from_pretrained(DEFAULT_T5_NAME)
+
+sentence ="In the year 2525 if man is still alive, if woman can survive they will find"
+
+tokens = tokenizer.encode(sentence)
+
+model.eval()
+output = model(tokens)
+
+print(output)
 
 
-unet = Unet(
-    dim = 128, # the "Z" layer dimension, i.e. the number of filters the outputs to the first layer
-    cond_dim = 256,
-    dim_mults = (1, 2, 4),
-    num_resnet_blocks = 2,
-    layer_attns = (False, True, True),
-    layer_cross_attns = (False, True, True)
+torch.onnx.export(
+    model, 
+    (torch.randint(0, 8000, (1,256,)), torch.randint(0, 2, (1,256,))), 
+    '../transformers-js/models/t5-model.onnx', 
+    input_names=['tokens', 'attention_mask'], 
+    output_names=['encoding'],
+    dynamic_axes={'tokens': {0: 'batch_size', 1: 'sequence_length'}, 'attention_mask': {0: 'batch_size', 1: 'sequence_length'}, 'encoding': {0: 'batch_size', 1: 'sequence_length'}}
 )
-
-
-y = unet(torch.randn(1, 3, 32, 32), torch.randn(2))
-
-make_dot(y.mean(), params=dict(unet.named_parameters()), show_attrs=True, show_saved=True)
-
-dot = make_dot(y)
-
-dot.format = 'png'
-dot.render('unet.png')
-
-
-# summary(unet,  (3, 32, 32), device='cpu')
