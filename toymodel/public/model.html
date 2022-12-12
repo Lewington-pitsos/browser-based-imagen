@@ -6,8 +6,8 @@
           <div>Status: <span id="status">Loading models...</span></div>
 
           <div id="form">
-            <label for="prompt">A photo of a/an:</label>
-            <select name="cars" id="cars">
+            <label for="prompt">Prompt: "a photo of a/an: ___ "</label>
+            <select name="prompt" id="prompt" disabled="true">
               <option value="truck">truck</option>
               <option value="bird">bird</option>
               <option value="airplanes">airplanes</option>
@@ -19,7 +19,7 @@
               <option value="deer">deer</option>
               <option value="frog">frog</option>
             </select>
-            <button id=""submit>Submit</button>
+            <button id="submit" submit disabled="true">Submit</button>
           </div>
 
           <div id="output">
@@ -33,6 +33,7 @@
 
     <script src="ort.js"></script>
     <script src="tokenizers.js"></script>
+    <script src="utils.js"></script>
     <script src="model.js"></script>
 </html>
 

@@ -1,11 +1,5 @@
-import transformers
-import transformers.convert_graph_to_onnx as onnx_convert
 import torch
-from typing import List
-from transformers import T5Tokenizer, T5EncoderModel, T5Config
-from pathlib import Path
-from torchsummary import summary
-
+from transformers import T5Tokenizer, T5EncoderModel
 
 DEFAULT_T5_NAME = 'google/t5-v1_1-base'
 
@@ -19,9 +13,6 @@ tokens = tokenizer.encode(sentence)
 model.eval()
 output = model(tokens)
 
-print(output)
-
-
 torch.onnx.export(
     model, 
     (torch.randint(0, 8000, (1,256,)), torch.randint(0, 2, (1,256,))), 
@@ -30,3 +21,5 @@ torch.onnx.export(
     output_names=['encoding'],
     dynamic_axes={'tokens': {0: 'batch_size', 1: 'sequence_length'}, 'attention_mask': {0: 'batch_size', 1: 'sequence_length'}, 'encoding': {0: 'batch_size', 1: 'sequence_length'}}
 )
+
+print("export complete")
