@@ -29,6 +29,7 @@ function getTimesteps(startValue, stopValue, cardinality, batch_size) {
     for (let i = 0; i < arr.length - 1; i++) {
       const after = arr[i];
       const prev = arr[i+1];
+      const tsBatch = []
       tsBatch.push(Array(batch_size).fill(prev))
       tsBatch.push(Array(batch_size).fill(after))
       timesteps.push(tsBatch)
@@ -45,26 +46,37 @@ function clampAndDenormalize(number, min, max) {
     return (clamp(number, min, max) + 1) * 0.5;
 }
 
+
+function getColorIndicesForCoord(x, y, width) {
+    const red = y * (width * 4) + x * 4;
+    return [red, red + 1, red + 2, red + 3];
+};
+  
+
 async function displayOutput(data) {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    const pixels = data.map(x => clampAndDenormalize(x, -1, 1) * 255)
-    const imageData = ctx.createImageData(32, 32);
+    // const rgbValues = Uint8Array.from(data.map(x => clampAndDenormalize(x, -1, 1) * 255))
+    const imgData = ctx.createImageData(32, 32);
+    const width = 32
+    const height = 32
 
-    var data = imageData.data;  // the array of RGBA values
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const [redIndex, greenIndex, blueIndex, alphaIndex] = getColorIndicesForCoord(x, y, width);
+            
+            const arrayIdx = x + y * width;
 
-    for (let q = 0; q < 3; q++) {
-        for(var i = 0; i < 32; i++) {
-            for(var j = 0; j < 32; j++) {
-                var s = 4 * i * 32 + 4 * j;  // calculate the index in the array
-                idx = i * j * q
-                data[s] = pixels[idx];
-            }
+            imgData.data[redIndex] = clampAndDenormalize(data[arrayIdx], -1, 1) * 255
+            imgData.data[greenIndex] = clampAndDenormalize(data[arrayIdx + width * height], -1, 1) * 255
+            imgData.data[blueIndex] = clampAndDenormalize(data[arrayIdx + (2*width * height)], -1, 1) * 255
+            imgData.data[alphaIndex] = 255;
+      
         }
-    }
+      }
+      
 
-
-    ctx.putImageData(imageData, 0, 0);
+    ctx.putImageData(imgData, 0, 0);
 
     await sleep(10)
 }
@@ -125,17 +137,16 @@ async function collectData() {
     const width = 32;
     const height = 32;
     
-    // const noise = new ort.Tensor(
-    //     'float32', 
-    //     Array.from({length: batch_size * channels * width * height}, () => randNorm()), 
-    //     [batch_size, channels, width, height]
-    // );
+    const noise = new ort.Tensor(
+        'float32', 
+        Array.from({length: batch_size * channels * width * height}, () => randNorm()), 
+        [batch_size, channels, width, height]
+    );
     
-    const noise = new ort.Tensor("float32", (await (await fetch('truck.json')).json())['img'].flat().flat().flat(), [1, 3, 32, 32])
-    
-    console.log(noise)
+    // const noise = new ort.Tensor("float32", (await (await fetch('truck.json')).json())['img'].flat().flat().flat(), [1, 3, 32, 32])
+    // const noise = (await (await fetch('truck.json')).json())['img']
+
     await displayOutput(noise.data);
-    return
     
     const data = await (await fetch('tokenizer.json')).json()
     tokenizer = Tokenizer.fromConfig(data);
