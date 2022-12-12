@@ -118,7 +118,6 @@ async function performInference(tokenizer, transformer, unet, prompt) {
     
     await displayOutput(noise.data);
 
-
     let inputIds = tokenizer.encode(prompt);
 
     if (inputIds.length > TOKEN_LENGTH) {
