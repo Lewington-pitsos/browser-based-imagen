@@ -20,6 +20,6 @@
     }
   ],
   "content_security_policy": {
-    "sandbox": "sandbox allow-scripts; script-src 'unsafe-eval';"
+    "sandbox": "sandbox allow-scripts; script-src 'unsafe-eval';" 
   }
 }

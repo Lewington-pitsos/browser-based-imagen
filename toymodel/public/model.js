@@ -136,13 +136,12 @@ async function performInference(tokenizer, transformer, unet, prompt) {
 
     document.getElementById("status").textContent="Performing Inference...";
     await sleep(10)
-    const inputData = await (await fetch('inputs.json')).json()
     output = await sample(
         unet, 
-        new ort.Tensor("float32", inputData.image.flat().flat().flat(), [batch_size, channels, width, height]), 
-        new ort.Tensor("float32", inputData.text_embeds.flat().flat(), [batch_size, inputIds.length, 768]), 
-        new ort.Tensor("bool", inputData.text_mask.flat(), [batch_size, inputIds.length]),
-        new ort.Tensor("float32", inputData.cond_scale, [batch_size]),
+        noise, 
+        encoderResults.encoding,
+        new ort.Tensor("bool", new  Uint8Array(inputIds.length).fill(true), [batch_size, inputIds.length]),
+        new ort.Tensor("float32", [1.1], [batch_size]),        
         250,
     )
 
