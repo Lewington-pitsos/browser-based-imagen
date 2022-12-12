@@ -87,7 +87,7 @@ async function loadModels() {
     const tfmBuffer = await (await fetch('t5-model.onnx')).arrayBuffer()
     const tfmSessionPromise = await ort.InferenceSession.create(tfmBuffer, { executionProviders: ["wasm"] });
     
-    const unetBuffer = await (await fetch('unet-32.onnx')).arrayBuffer()
+    const unetBuffer = await (await fetch('unet-32-2.onnx')).arrayBuffer()
     const unetSessionPromise = await ort.InferenceSession.create(unetBuffer, { executionProviders: ["wasm"]});
     
     const transformer = await tfmSessionPromise;
