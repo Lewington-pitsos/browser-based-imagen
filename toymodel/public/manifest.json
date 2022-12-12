@@ -1,24 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Toymodel",
+  "name": "Browser Based Imagen",
   "version": "0.1.0",
-  "description": "My Chrome Extension",
+  "description": "Runs a small Imagen model in the browser",
   "icons": {
-    "16": "icons/icon_16.png",
-    "32": "icons/icon_32.png",
-    "48": "icons/icon_48.png",
-    "128": "icons/icon_128.png"
+    "64": "icons/icon.png"
   },
   "action": {
-    "default_title": "Toymodel",
+    "default_title": "Browser Based Imagen",
     "default_popup": "model.html"
   },
-  "permissions": [
-    "storage",
-    "tabs",
-    "activeTab", 
-    "scripting"
-  ],
   "sandbox": {
     "pages": ["model.html"]
   },
@@ -28,18 +19,7 @@
       "matches": ["<all_urls>"]
     }
   ],
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "contentScript.js"
-      ]
-    }
-  ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
     "sandbox": "sandbox allow-scripts; script-src 'unsafe-eval';"
   }
 }
