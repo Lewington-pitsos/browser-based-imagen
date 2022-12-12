@@ -1,40 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>My Chrome Extension</title>
-    <link rel="stylesheet" href="popup.css" />
-  </head>
-  <body>
-    <iframe src=”../model.html” id=”sandbox” style=”display:none”></iframe>
+<html>
+    <body>
+        <div id="root">
 
-    <div class="app">
-      <p class="counter-label">Counter</p>
-      <div id="counter" class="counter"></div>
-      <div class="button-container">
-        <button id="decrementBtn" class="button">-</button>
-        <button id="incrementBtn" class="button">+</button>
-      </div>
+          <div>Status: <span id="status">Loading models...</span></div>
 
-      <hr class="divider" />
+          <div id="form">
+            <label for="prompt">A photo of a/an:</label>
+            <input id="prompt" type="text" placeholder="truck" />
+            <button id=""submit>Submit</button>
+          </div>
 
-      <p class="title">Chrome Extension is Ready!</p>
-      <p class="subtitle">Start by updating <code>popup.html</code></p>
-    </div>
+          <div id="output">
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script> -->
-    <!-- <script src="src/tokenizers.js"></script>
-    <script src="src/transformers.js"></script> -->
+            <div id="counter">Iterations: <span id="count">0</span>/250</div>
+            <div id="image"></div>
+          </div>
 
-    <!-- <script src="popup.js"></script> -->
+        </div>
+    </body>
 
-
-    
-    <!--
-      This HTML file opens when you click on icon from the toolbar.
-
-      To begin the development, run `npm run watch`.
-      To create a production bundle, use `npm run build`.
-    -->
-  </body>
+    <script src="ort.js"></script>
+    <script src="tokenizers.js"></script>
+    <script src="model.js"></script>
 </html>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script> -->

@@ -1,13 +1,35 @@
 <!DOCTYPE html>
 <html>
-    <div>HI</div>
-    <!-- <script>
-        console.log('model.html file loaded');
+    <body>
+        <div id="root" style="width: 200px;">
 
-        eval("console.log('q')")
+          <div>Status: <span id="status">Loading models...</span></div>
 
-        console.log("eval completed in model html")
-    </script> -->
+          <div id="form">
+            <label for="prompt">A photo of a/an:</label>
+            <select name="cars" id="cars">
+              <option value="truck">truck</option>
+              <option value="bird">bird</option>
+              <option value="airplanes">airplanes</option>
+              <option value="horse">horse</option>
+              <option value="dog">dog</option>
+              <option value="cat">cat</option>
+              <option value="car">car</option>
+              <option value="ship">ship</option>
+              <option value="deer">deer</option>
+              <option value="frog">frog</option>
+            </select>
+            <button id=""submit>Submit</button>
+          </div>
+
+          <div id="output">
+
+            <div id="counter">Iterations: <span id="count">0</span>/250</div>
+            <canvas id="canvas" width="32" height="32"></canvas>
+          </div>
+
+        </div>
+    </body>
 
     <script src="ort.js"></script>
     <script src="tokenizers.js"></script>
