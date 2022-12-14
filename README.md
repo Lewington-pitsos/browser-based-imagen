@@ -33,6 +33,7 @@ There is very little actual code in this repo. It's mostly just piping together 
     - Because the images are only 32x32 we only use a single Unet, and we reduce its parameters significantly and only perform 250 steps (rather than the usual 1000) per sample. We rely heavily on lucidrains excellent [imagen-pytorch](https://github.com/lucidrains/imagen-pytorch).
     - It took 67,000 steps at a batch size of 64 to get pretty average results (see the wanb report above)
     - We use a t5-base embedding of the sentence `"a photo of a class-name"` as the conditioning embedding for each class  
+    - You can download it from the hugging face link above
 2. Convert the model to ONNX
     - Using `export_unet.ipynb` import the best model you trained and overwrite some of the internal functions so that all instances of the `expm1` function are removed from the model's internal graph (and replaced with an equivalent `faux_expm1` function). This is important since ONNX has no equivalent operation for `exmp1`. My math knowledge is very weak, so I used ChatGPT to write `faux_expm1`.
     - ONNX can only convert models which have a `forward` method, so we create a new `torch.nn.Module` class `ImagenOnnx` which wraps the `Imagen` instance and performs a single simplified `Imagen` sampling step using its `forward` method. 
