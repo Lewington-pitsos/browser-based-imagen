@@ -18,7 +18,7 @@ This is the process I followed:
 4. Loaded all 3 (tokenizer, transformer, unet) into a chrome extension and used them to create a 250-step javascript inference loop where the output at each step is projected onto a html canvas
 
 ## Links
-The actual extension can be found on [huggingface](https://huggingface.co/lewington/browser-based-imagen/tree/main). Simply download, unzip locally, and then load the `build` directory into chrome using "load unpacked". You can also find a pretrained imagen model here (pretrained for the cifar-10 classes).
+The actual extension (as well as the pretrained pytorch Imagen model) can be found on [huggingface](https://huggingface.co/lewington/browser-based-imagen/tree/main). Simply download, unzip locally, and then load the `build` directory into chrome using "load unpacked". You can also find a pretrained imagen model here (pretrained for the cifar-10 classes).
 
 The script for training a tiny imagen model can be found in [this colab](https://colab.research.google.com/drive/1QZ6Gys5dYnojn4_fnn3aPkNRZaifHODt?usp=sharing). 
 
