@@ -4,7 +4,7 @@
 
 This projects contains the scripts required for running imagen in the browser (i.e. using the actual chrome runtime). The GIF is sped up around 1000x, so in reality it  isn't practical in any way, but hopefully this repo will be useful to someone else trying to put text2img models in the browser. 
 
-## How irt Works
+## How it Works
 
 Imagen works by taking a text prompt, running it through a t5 tokenizer, and then a t5 encoder (a.k.a "transformer"), before passing the encoded text plus some random noise to a unet, and performing a long sampling loop.
 
